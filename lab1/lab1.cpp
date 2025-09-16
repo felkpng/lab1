@@ -93,6 +93,7 @@ Pipe AddPipe() {
     int diametr;
     bool repair;
 
+    system("cls");
     cout << "Название: ";
     cin >> name;
 
@@ -144,6 +145,7 @@ Ks AddKs() {
     int workshops_count;
     int workshops_working;
 
+    system("cls");
     cout << "Название: ";
     cin >> name;
 
@@ -191,10 +193,10 @@ void ShowObjects(Pipe truba, Ks station) {
     }
 
     if (truba.name != "") {
-        cout << endl << "Труба\nНазвание: " << truba.name << endl;
+        cout << "\n\nТруба\nНазвание: " << truba.name << endl;
         cout << "Длина: " << truba.lenght << endl;
         cout << "Диаметр: " << truba.diametr << endl;
-        cout << "В работе: " << truba.repair << endl << endl;
+        cout << "В работе: " << truba.repair << endl;
     }
 
     if (station.name != "") {
@@ -389,6 +391,50 @@ int SaveData(Pipe truba, Ks station) {
     return 0;
 }
 
+Pipe LoadPipe() {
+    ifstream inFile("truba.txt");
+    string line;
+    Pipe truba;
+
+    if (inFile.is_open()) {
+        getline(inFile, truba.name);
+
+        getline(inFile, line);
+        truba.lenght = stof(line);
+
+        getline(inFile, line);
+        truba.diametr = stoi(line);
+
+        getline(inFile, line);
+        if (line == "1") { truba.repair = true; }
+        else { truba.repair = false; }
+
+        inFile.close();
+    }
+    return truba;
+}
+
+Ks LoadKs() {
+    ifstream inFile("station.txt");
+    string line;
+    Ks station;
+
+    if (inFile.is_open()) {
+        getline(inFile, station.name);
+
+        getline(inFile, line);
+        station.workshops_count = stoi(line);
+
+        getline(inFile, line);
+        station.workshops_working = stoi(line);
+
+        getline(inFile, station.type);
+
+        inFile.close();
+    }
+    return station;
+}
+
 void Menu() {
     Pipe truba;
     Ks station;
@@ -418,6 +464,12 @@ void Menu() {
             break;
         case 6:
             SaveData(truba, station);
+            break;
+        case 7:
+            truba = LoadPipe();
+            station = LoadKs();
+            system("cls");
+            cout << "Данные успешно загруженны\n";
             break;
         };
     };
