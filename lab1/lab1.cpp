@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 #include <stdlib.h>
 #include <clocale>
+#include <fstream>
 #include <string>
 using namespace std;
 
@@ -355,6 +356,39 @@ Ks EditKs(Ks station) {
     }
 }
 
+int SaveData(Pipe truba, Ks station) {
+    if (truba.name != "") {
+        ofstream outFilePipe("truba.txt");
+        if (outFilePipe.is_open()) {
+            outFilePipe << truba.name << endl;
+            outFilePipe << truba.lenght << endl;
+            outFilePipe << truba.diametr << endl;
+            outFilePipe << truba.repair << endl;
+            outFilePipe.close();
+        }
+        else {
+            cerr << "Ошибка: Не удалось открыть файл 'truba.txt' для записи." << endl;
+        }
+    }
+    
+    if (station.name != "") {
+        ofstream outFileKs("station.txt");
+        if (outFileKs.is_open() && station.name != "") {
+            outFileKs << station.name << endl;
+            outFileKs << station.workshops_count << endl;
+            outFileKs << station.workshops_working << endl;
+            outFileKs << station.type << endl;
+            outFileKs.close();
+        }
+        else {
+            cerr << "Ошибка: Не удалось открыть файл 'station.txt' для записи." << endl;
+        }
+    }
+    system("cls");
+    cout << "Данные успешно записаны в файлы 'truba.txt' и 'station.txt'.\n\n";
+    return 0;
+}
+
 void Menu() {
     Pipe truba;
     Ks station;
@@ -381,6 +415,9 @@ void Menu() {
             break;
         case 5:
             station = EditKs(station);
+            break;
+        case 6:
+            SaveData(truba, station);
             break;
         };
     };
