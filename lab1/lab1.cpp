@@ -46,11 +46,11 @@ bool toFloat(string str) {
         }
         return true;
     }
-    catch (const invalid_argument& e) {
+    catch (const invalid_argument) {
         cerr << "Ошибка: " << str << " не может быть преобразована в float (неверный аргумент)." << endl;
         return false;
     }
-    catch (const out_of_range& e) {
+    catch (const out_of_range) {
         cerr << "Ошибка: " << str << " выходит за пределы диапазона float." << endl;
         return false;
     }
@@ -64,11 +64,11 @@ bool toInt(string str) {
         }
         return true;
     }
-    catch (const invalid_argument& e) {
+    catch (const invalid_argument) {
         cerr << "Ошибка: " << str << " не может быть преобразована в int (неверный аргумент)." << endl;
         return false;
     }
-    catch (const out_of_range& e) {
+    catch (const out_of_range) {
         cerr << "Ошибка: " << str << " выходит за пределы диапазона int." << endl;
         return false;
     }
@@ -185,22 +185,173 @@ void ShowObjects(Pipe truba, Ks station) {
     cout << "Объекты: ";
 
     if (truba.name == "" && station.name == "") {
-        cout << "нет" << endl;
+        cout << "нет" << endl << endl;
         return;
     }
 
     if (truba.name != "") {
-        cout << endl << "Название: " << truba.name << endl;
+        cout << endl << "Труба\nНазвание: " << truba.name << endl;
         cout << "Длина: " << truba.lenght << endl;
         cout << "Диаметр: " << truba.diametr << endl;
         cout << "В работе: " << truba.repair << endl << endl;
     }
 
     if (station.name != "") {
-        cout << endl << "Название: " << station.name << endl;
+        cout << endl << "КС\nНазвание: " << station.name << endl;
         cout << "Количество цехов: " << station.workshops_count;
         cout << " (" << station.workshops_working << " в работе)" << endl;
         cout << "Тип: " << station.type << endl << endl;
+    }
+}
+
+Pipe EditPipe(Pipe truba) {
+    system("cls");
+    if (truba.name == "") {
+        cerr << "У вас нет трубы!" << endl << endl;
+        return truba;
+    }
+
+    while (true) {
+        int choice;
+        cout << "Что хотите редактировать?\n1. Имя\n2. Длина\n3. Диаметр\n4. В ремонте\n0. Назад\n";
+        cin >> choice;
+
+        switch (choice) {
+        case 0:
+            return truba;
+        case 1:
+            system("cls");
+            cout << "Новое имя: ";
+            cin >> truba.name;
+            break;
+        case 2:
+        {
+            system("cls");
+            string lenght_nochecked;
+
+            while (true) {
+                cout << "Новая длина: ";
+                cin >> lenght_nochecked;
+
+                if (toFloat(lenght_nochecked)) {
+                    truba.lenght = stof(lenght_nochecked);
+                    break;
+                }
+            }
+            break;
+        }
+        case 3:
+        {
+            system("cls");
+            string diametr_nochecked;
+
+            while (true) {
+                cout << "Диаметр: ";
+                cin >> diametr_nochecked;
+
+                if (toInt(diametr_nochecked)) {
+                    truba.diametr = stoi(diametr_nochecked);
+                    break;
+                }
+            }
+            break;
+        }
+        case 4:
+        {
+            system("cls");
+            string repair_nochecked;
+
+            while (true) {
+                cout << "В ремонте? (+/-): ";
+                cin >> repair_nochecked;
+
+                if (toBool(repair_nochecked)) {
+                    truba.repair = (repair_nochecked == "+");
+                    break;
+                }
+            }
+            break;
+        }
+        }
+    }
+    return truba;
+}
+
+Ks EditKs(Ks station) {
+    system("cls");
+    if (station.name == "") {
+        cerr << "У вас нет КС!" << endl << endl;
+        return station;
+    }
+
+    while (true) {
+        int choice;
+        cout << "Что хотите редактировать?\n1. Имя\n2. Количество цехов\n3. Цехов в работе\n4. Тип\n0. Назад\n";
+        cin >> choice;
+
+        switch (choice) {
+        case 0:
+            return station;
+        case 1:
+            system("cls");
+            cout << "Новое имя: ";
+            cin >> station.name;
+            break;
+        case 2:
+        {
+            system("cls");
+            string workshops_count_nochecked;
+
+            while (true) {
+                cout << "Новое количество цехов: ";
+                cin >> workshops_count_nochecked;
+
+                if (toInt(workshops_count_nochecked)) {
+                    int new_count = stoi(workshops_count_nochecked);
+                    if (new_count >= station.workshops_working) {
+                        station.workshops_count = new_count;
+                        break;
+                    }
+                    else {
+                        cout << "Количество цехов не может быть меньше количества работающих цехов ("
+                            << station.workshops_working << ")" << endl;
+                    }
+                }
+            }
+            break;
+        }
+        case 3:
+        {
+            system("cls");
+            string workshops_working_nochecked;
+
+            while (true) {
+                cout << "Цехов в работе: ";
+                cin >> workshops_working_nochecked;
+
+                if (toInt(workshops_working_nochecked)) {
+                    int new_working = stoi(workshops_working_nochecked);
+                    if (new_working <= station.workshops_count) {
+                        station.workshops_working = new_working;
+                        break;
+                    }
+                    else {
+                        cout << "Количество цехов в работе должно быть <= количества цехов ("
+                            << station.workshops_count << ")" << endl;
+                    }
+                }
+            }
+            break;
+        }
+        case 4:
+            system("cls");
+            cout << "Новый тип: ";
+            cin >> station.type;
+            break;
+        default:
+            cout << "Неверный выбор!" << endl;
+            break;
+        }
     }
 }
 
@@ -224,6 +375,12 @@ void Menu() {
             break;
         case 3:
             ShowObjects(truba, station);
+            break;
+        case 4:
+            truba = EditPipe(truba);
+            break;
+        case 5:
+            station = EditKs(station);
             break;
         };
     };
