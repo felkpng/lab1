@@ -19,29 +19,9 @@ struct Ks {
     string type;
 };
 
-Pipe NewPipe(string name, float lenght, int diametr, bool repair) {
-    Pipe truba;
-    truba.name = name;
-    truba.lenght = lenght;
-    truba.diametr = diametr;
-    truba.repair = repair;
-
-    return truba;
-};
-
-Ks NewKs(string name, int workshops_count, int workshops_working, string type) {
-    Ks station;
-    station.name = name;
-    station.workshops_count = workshops_count;
-    station.workshops_working = workshops_working;
-    station.type = type;
-
-    return station;
-};
-
 bool toFloat(string str) {
     try {
-        if (stof(str) < 0) {
+        if (stof(str) <= 0) {
             cerr << "Ошибка: Число должно быть положительным!" << endl;
             return false;
         }
@@ -95,7 +75,8 @@ Pipe AddPipe() {
 
     system("cls");
     cout << "Название: ";
-    cin >> name;
+    cin.ignore(1000000000000, '\n');
+    getline(cin, name);
 
     while (true){
         cout << "Длина: ";
@@ -113,7 +94,8 @@ Pipe AddPipe() {
 
         if (toInt(diametr_nochecked)) {
             diametr = stoi(diametr_nochecked);
-            break;
+            if (diametr == 0) { cout << "Диаметр не может быть равен нулю"; }
+            else { break; }
         }
     }
 
@@ -128,7 +110,12 @@ Pipe AddPipe() {
         }
     }
 
-    Pipe truba = NewPipe(name, lenght, diametr, repair);
+    Pipe truba;
+    truba.name = name;
+    truba.diametr = diametr;
+    truba.lenght = lenght;
+    truba.repair = repair;
+
     system("cls");
     cout << "Труба успешно создана!" << endl << endl;
 
@@ -147,7 +134,8 @@ Ks AddKs() {
 
     system("cls");
     cout << "Название: ";
-    cin >> name;
+    cin.ignore(1000000000000, '\n');
+    getline(cin, name);
 
     while (true) {
         cout << "Количество цехов: ";
@@ -173,9 +161,15 @@ Ks AddKs() {
     }
 
     cout << "Тип станции: ";
-    cin >> type;
+    cin.ignore(1000000000000, '\n');
+    getline(cin, type);
 
-    Ks station = NewKs(name, workshops_count, workshops_working, type);
+    Ks station;
+    station.name = name;
+    station.workshops_count = workshops_count;
+    station.workshops_working = workshops_count;
+    station.type = type;
+
     system("cls");
     cout << "Станция успешно создана!" << endl << endl;
 
@@ -225,7 +219,8 @@ Pipe EditPipe(Pipe truba) {
         case 1:
             system("cls");
             cout << "Новое имя: ";
-            cin >> truba.name;
+            cin.ignore(1000000000000, '\n');
+            getline(cin, truba.name);
             break;
         case 2:
         {
@@ -301,7 +296,8 @@ Ks EditKs(Ks station) {
         case 1:
             system("cls");
             cout << "Новое имя: ";
-            cin >> station.name;
+            cin.ignore(1000000000000, '\n');
+            getline(cin, station.name);
             break;
         case 2:
         {
@@ -352,7 +348,8 @@ Ks EditKs(Ks station) {
         case 4:
             system("cls");
             cout << "Новый тип: ";
-            cin >> station.type;
+            cin.ignore(1000000000000, '\n');
+            getline(cin, station.type);
             break;
         default:
             cout << "Неверный ввод" << endl;
@@ -438,10 +435,7 @@ Ks LoadKs() {
     return station;
 }
 
-void Menu() {
-    Pipe truba;
-    Ks station;
-
+void Menu(Pipe& truba, Ks& station) {
     while (true) {
         cout << "Меню:\n1. Добавить трубу\n2. Добавить КС\n3. Просмотр всех объектов\n4. Редактировать трубу\n5. Редактировать КС\n6. Сохранить\n7. Загрузить\n0. Выход\n";
         int choice = -1;
@@ -484,6 +478,9 @@ void Menu() {
 
 int main()
 {
+    Pipe truba;
+    Ks station;
+
     setlocale(LC_ALL, "rus");
-    Menu();
+    Menu(truba, station);
 }
