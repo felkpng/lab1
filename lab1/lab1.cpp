@@ -275,6 +275,9 @@ Pipe EditPipe(Pipe truba) {
             }
             break;
         }
+        default:
+            cout << "Неверный ввод" << endl;
+            break;
         }
     }
     return truba;
@@ -352,13 +355,13 @@ Ks EditKs(Ks station) {
             cin >> station.type;
             break;
         default:
-            cout << "Неверный выбор!" << endl;
+            cout << "Неверный ввод" << endl;
             break;
         }
     }
 }
 
-int SaveData(Pipe truba, Ks station) {
+bool SaveData(Pipe truba, Ks station) {
     if (truba.name != "") {
         ofstream outFilePipe("truba.txt");
         if (outFilePipe.is_open()) {
@@ -388,7 +391,7 @@ int SaveData(Pipe truba, Ks station) {
     }
     system("cls");
     cout << "Данные успешно записаны в файлы 'truba.txt' и 'station.txt'.\n\n";
-    return 0;
+    return true;
 }
 
 Pipe LoadPipe() {
@@ -441,8 +444,12 @@ void Menu() {
 
     while (true) {
         cout << "Меню:\n1. Добавить трубу\n2. Добавить КС\n3. Просмотр всех объектов\n4. Редактировать трубу\n5. Редактировать КС\n6. Сохранить\n7. Загрузить\n0. Выход\n";
-        int choice;
-        cin >> choice;
+        int choice = -1;
+        string enter;
+        cin >> enter;
+        if (toInt(enter)) {
+            choice = stoi(enter);
+        }
 
         switch (choice) {
         case 0:
