@@ -19,10 +19,18 @@ struct Ks {
     string type;
 };
 
-bool toFloat(string str) {
+bool toFloat(string& str) {
     try {
+        string el;
+        for (int i = 0; i < str.length(); i++) {
+            el = str[i];
+            if (el != "." && el != ",")
+                stoi(el);
+            else if (el == ".")
+                str[i] = ',';
+        }
         if (stof(str) <= 0) {
-            cerr << "Ошибка: Число должно быть положительным!" << endl;
+            cerr << "Ошибка: Число должо быть положительным!" << endl;
             return false;
         }
         return true;
@@ -39,6 +47,12 @@ bool toFloat(string str) {
 
 bool toInt(string str) {
     try {
+        string str1 = to_string(stoi(str));
+        if (str1.length() != str.length()) {
+            cerr << "Ошибка: " << str << " не может быть преобразована в int (неверный аргумент)." << endl;
+            return false;
+        }
+
         if (stoi(str) < 0) {
             cerr << "Ошибка: Число должно быть положительным" << endl;
             return false;
@@ -74,9 +88,15 @@ Pipe AddPipe() {
     bool repair;
 
     system("cls");
-    cout << "Название: ";
-    cin.ignore(1000000000000, '\n');
-    getline(cin, name);
+    while (true){
+        cout << "Название: ";
+        cin.ignore(1000000000000, '\n');
+        getline(cin, name);
+        if (name == "#PIPE" || name == "#KS") {
+            cout << "Это запрещенное имя!\n";
+        }
+        else { break; }
+    }
 
     while (true){
         cout << "Длина: ";
@@ -133,9 +153,15 @@ Ks AddKs() {
     int workshops_working;
 
     system("cls");
-    cout << "Название: ";
-    cin.ignore(1000000000000, '\n');
-    getline(cin, name);
+    while (true) {
+        cout << "Название: ";
+        cin.ignore(1000000000000, '\n');
+        getline(cin, name);
+        if (name == "#PIPE" || name == "#KS") {
+            cout << "Это запрещенное имя!\n";
+        }
+        else { break; }
+    }
 
     while (true) {
         cout << "Количество цехов: ";
@@ -160,14 +186,20 @@ Ks AddKs() {
         }
     }
 
-    cout << "Тип станции: ";
-    cin.ignore(1000000000000, '\n');
-    getline(cin, type);
+    while (true) {
+        cout << "Тип станции: ";
+        cin.ignore(1000000000000, '\n');
+        getline(cin, type);
+        if (type == "#PIPE" || type == "#KS") {
+            cout << "Это запрещенный тип!\n";
+        }
+        else { break; }
+    }
 
     Ks station;
     station.name = name;
     station.workshops_count = workshops_count;
-    station.workshops_working = workshops_count;
+    station.workshops_working = workshops_working;
     station.type = type;
 
     system("cls");
@@ -218,9 +250,15 @@ Pipe EditPipe(Pipe truba) {
             return truba;
         case 1:
             system("cls");
-            cout << "Новое имя: ";
-            cin.ignore(1000000000000, '\n');
-            getline(cin, truba.name);
+            while (true) {
+                cout << "Новое имя: ";
+                cin.ignore(1000000000000, '\n');
+                getline(cin, truba.name);
+                if (truba.name == "#PIPE" || truba.name == "#KS") {
+                    cout << "Это запрещенное имя!\n";
+                }
+                else { break; }
+            }
             break;
         case 2:
         {
@@ -295,9 +333,15 @@ Ks EditKs(Ks station) {
             return station;
         case 1:
             system("cls");
-            cout << "Новое имя: ";
-            cin.ignore(1000000000000, '\n');
-            getline(cin, station.name);
+            while (true) {
+                cout << "Новое имя: ";
+                cin.ignore(1000000000000, '\n');
+                getline(cin, station.name);
+                if (station.name == "#PIPE" || station.name == "#KS") {
+                    cout << "Это запрещенное имя!\n";
+                }
+                else { break; }
+            }
             break;
         case 2:
         {
@@ -347,9 +391,15 @@ Ks EditKs(Ks station) {
         }
         case 4:
             system("cls");
-            cout << "Новый тип: ";
-            cin.ignore(1000000000000, '\n');
-            getline(cin, station.type);
+            while (true) {
+                cout << "Новый тип: ";
+                cin.ignore(1000000000000, '\n');
+                getline(cin, station.type);
+                if (station.type == "#PIPE" || station.type == "#KS") {
+                    cout << "Это запрещенный тип!\n";
+                }
+                else { break; }
+            }
             break;
         default:
             cout << "Неверный ввод" << endl;
@@ -359,80 +409,109 @@ Ks EditKs(Ks station) {
 }
 
 bool SaveData(Pipe truba, Ks station) {
-    if (truba.name != "") {
-        ofstream outFilePipe("truba.txt");
-        if (outFilePipe.is_open()) {
-            outFilePipe << truba.name << endl;
-            outFilePipe << truba.lenght << endl;
-            outFilePipe << truba.diametr << endl;
-            outFilePipe << truba.repair << endl;
-            outFilePipe.close();
+    ofstream outFile("data.txt");
+    if (outFile.is_open()) {
+        if (truba.name != "") {
+            outFile << "#PIPE" << endl;
+            outFile << truba.name << endl;
+            outFile << truba.lenght << endl;
+            outFile << truba.diametr << endl;
+            outFile << truba.repair << endl;
         }
-        else {
-            cerr << "Ошибка: Не удалось открыть файл 'truba.txt' для записи." << endl;
+
+        if (station.name != "") {
+            outFile << "#KS" << endl;
+            outFile << station.name << endl;
+            outFile << station.workshops_count << endl;
+            outFile << station.workshops_working << endl;
+            outFile << station.type << endl;
         }
+
+        outFile.close();
     }
     
-    if (station.name != "") {
-        ofstream outFileKs("station.txt");
-        if (outFileKs.is_open() && station.name != "") {
-            outFileKs << station.name << endl;
-            outFileKs << station.workshops_count << endl;
-            outFileKs << station.workshops_working << endl;
-            outFileKs << station.type << endl;
-            outFileKs.close();
-        }
-        else {
-            cerr << "Ошибка: Не удалось открыть файл 'station.txt' для записи." << endl;
-        }
-    }
     system("cls");
-    cout << "Данные успешно записаны в файлы 'truba.txt' и 'station.txt'.\n\n";
+    cout << "Данные успешно записаны в файл 'data.txt'\n\n";
     return true;
 }
 
-Pipe LoadPipe() {
-    ifstream inFile("truba.txt");
+void LoadData(Pipe& truba, Ks& station) {
+    ifstream inFile("data.txt");
     string line;
-    Pipe truba;
 
     if (inFile.is_open()) {
-        getline(inFile, truba.name);
+        while (getline(inFile, line)) {
+            if (line == "#PIPE") {
+                string name;
+                float lenght;
+                int diametr;
+                bool repair;
 
-        getline(inFile, line);
-        truba.lenght = stof(line);
+                getline(inFile, name);
 
-        getline(inFile, line);
-        truba.diametr = stoi(line);
+                getline(inFile, line);
+                if (toFloat(line)) {
+                    lenght = stof(line);
+                }
+                else {
+                    cout << "Файл 'data.txt' поврежден! Загрузить данные невозможно\n";
+                    return;
+                }
 
-        getline(inFile, line);
-        if (line == "1") { truba.repair = true; }
-        else { truba.repair = false; }
+                getline(inFile, line);
+                if (toInt(line)) {
+                    diametr = stoi(line);
+                }
+                else {
+                    cout << "Файл 'data.txt' поврежден! Загрузить данные невозможно\n";
+                    return;
+                }
 
-        inFile.close();
+                getline(inFile, line);
+                if (line == "1") { repair = true; }
+                else { repair = false; }
+
+                truba.name = name;
+                truba.lenght = lenght;
+                truba.diametr = diametr;
+                truba.repair = repair;
+            }
+
+            if (line == "#KS") {
+                string name;
+                int workshops_count;
+                int workshops_working;
+                string type;
+
+                getline(inFile, name);
+
+                getline(inFile, line);
+                if (toInt(line)) {
+                    workshops_count = stoi(line);
+                }
+                else {
+                    cout << "Файл 'data.txt' поврежден! Загрузить данные невозможно\n";
+                    return;
+                }
+
+                getline(inFile, line);
+                if (toInt(line)) {
+                    workshops_working = stoi(line);
+                }
+                else {
+                    cout << "Файл 'data.txt' поврежден! Загрузить данные невозможно\n";
+                    return;
+                }
+
+                getline(inFile, type);
+
+                station.name = name;
+                station.workshops_count = workshops_count;
+                station.workshops_working = workshops_working;
+                station.type = type;
+            }
+        }
     }
-    return truba;
-}
-
-Ks LoadKs() {
-    ifstream inFile("station.txt");
-    string line;
-    Ks station;
-
-    if (inFile.is_open()) {
-        getline(inFile, station.name);
-
-        getline(inFile, line);
-        station.workshops_count = stoi(line);
-
-        getline(inFile, line);
-        station.workshops_working = stoi(line);
-
-        getline(inFile, station.type);
-
-        inFile.close();
-    }
-    return station;
 }
 
 void Menu(Pipe& truba, Ks& station) {
@@ -467,8 +546,7 @@ void Menu(Pipe& truba, Ks& station) {
             SaveData(truba, station);
             break;
         case 7:
-            truba = LoadPipe();
-            station = LoadKs();
+            LoadData(truba, station);
             system("cls");
             cout << "Данные успешно загруженны\n";
             break;

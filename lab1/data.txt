@@ -1,0 +1,10 @@
+#PIPE
+trubka
+100
+33
+1
+#KS
+ksssss
+33
+19
+gtrg
